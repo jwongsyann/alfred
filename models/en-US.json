@@ -1,0 +1,634 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "test alfred",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NoIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.YesIntent",
+          "samples": []
+        },
+        {
+          "name": "askFacilityTime",
+          "slots": [
+            {
+              "name": "facility",
+              "type": "facility",
+              "samples": [
+                "{facility}"
+              ]
+            },
+            {
+              "name": "timing_type",
+              "type": "timing_type",
+              "samples": [
+                "{timing_type}"
+              ]
+            }
+          ],
+          "samples": [
+            "what time does {facility} {timing_type}",
+            "when does {facility} {timing_type}"
+          ]
+        },
+        {
+          "name": "helloIntent",
+          "samples": [
+            "Hi",
+            "hello",
+            "yo",
+            "good morning",
+            "good evening",
+            "good afternoon",
+            "good day",
+            "how do you do",
+            "how are you",
+            "how are you today",
+            "hey",
+            "nice to see you",
+            "nice to hear from you",
+            "nice to meet you"
+          ]
+        },
+        {
+          "name": "orderHousekeepingItem",
+          "slots": [
+            {
+              "name": "number",
+              "type": "AMAZON.NUMBER",
+              "samples": [
+                "{number}"
+              ]
+            },
+            {
+              "name": "housekeepingItem",
+              "type": "housekeepingItem",
+              "samples": [
+                "{housekeepingItem}"
+              ]
+            },
+            {
+              "name": "counting_unit",
+              "type": "counting_unit"
+            }
+          ],
+          "samples": [
+            "can i get {number} {housekeepingItem} please",
+            "i would like {number} {housekeepingItem} ",
+            "can you ask housekeeping to get some {housekeepingItem} please",
+            "can you bring {number} {housekeepingItem} to my room",
+            "can you get me a {housekeepingItem}",
+            "please bring me {number} {housekeepingItem}",
+            "ask housekeeping to bring me some {housekeepingItem} now",
+            "bring me {housekeepingItem}",
+            "get me a few {housekeepingItem}",
+            "please get housekeeping to send me {number} {counting_unit} of {housekeepingItem}"
+          ]
+        },
+        {
+          "name": "askWifiPassword",
+          "samples": [
+            "what is the wifi password"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "values": [
+            {
+              "name": {
+                "value": "bottle",
+                "synonyms": [
+                  "bottles"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "piece",
+                "synonyms": [
+                  "pieces"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "plate",
+                "synonyms": [
+                  "plates"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "bowl",
+                "synonyms": [
+                  "bowls"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "unit",
+                "synonyms": [
+                  "units"
+                ]
+              }
+            }
+          ],
+          "name": "counting_unit"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "gym"
+              }
+            },
+            {
+              "name": {
+                "value": "hair_salon",
+                "synonyms": [
+                  "hair salon"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "kids_club",
+                "synonyms": [
+                  "kids club"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "minimart"
+              }
+            },
+            {
+              "name": {
+                "value": "pool"
+              }
+            },
+            {
+              "name": {
+                "value": "spa"
+              }
+            }
+          ],
+          "name": "facility"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "towel",
+                "synonyms": [
+                  "towel",
+                  "towels"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "toothpaste",
+                "synonyms": [
+                  "tooth gum",
+                  "paste",
+                  "tooth paste"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "toothbrush",
+                "synonyms": [
+                  "tooth brush"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "water bottle",
+                "synonyms": [
+                  "complimentary water bottles",
+                  "complimentary water",
+                  "water",
+                  "water bottle",
+                  "bottles of water",
+                  "bottle of water",
+                  "water bottles",
+                  "mineral water",
+                  "mineral water bottle",
+                  "mineral water bottles"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "pillow",
+                "synonyms": [
+                  "pillows"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "hanger",
+                "synonyms": [
+                  "hangers"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "adapter",
+                "synonyms": [
+                  "adapters",
+                  "power adapter",
+                  "power adapters"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "soap",
+                "synonyms": [
+                  "body soap",
+                  "body wash"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "body lotion",
+                "synonyms": [
+                  "body cream",
+                  "moisturizing body lotion",
+                  "moisturizing cream"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "hand lotion",
+                "synonyms": [
+                  "hand cream",
+                  "moisturizing hand cream",
+                  "moisturizing hand lotion"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "bathrobe",
+                "synonyms": [
+                  "robe",
+                  "bath robe",
+                  "bathrobes",
+                  "robes"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "slippers",
+                "synonyms": [
+                  "a pair of slippers",
+                  "pair of slippers",
+                  "flipflop",
+                  "flip flops",
+                  "flip-flops",
+                  "flip-flop",
+                  "slip ons"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "shampoo",
+                "synonyms": [
+                  "hair soap",
+                  "hair shampoo"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "conditioner",
+                "synonyms": [
+                  "hair conditioner",
+                  "conditioner for the hair"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "shaver",
+                "synonyms": [
+                  "razor",
+                  "blade",
+                  "shaving blade",
+                  "shaving razor"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "pen",
+                "synonyms": [
+                  "pens",
+                  "writing pen"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "magazine",
+                "synonyms": [
+                  "magazines",
+                  "reading magazine"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "coffee",
+                "synonyms": [
+                  "coffee satchels",
+                  "coffee packets",
+                  "packets of coffee powder",
+                  "coffee powder",
+                  "instant coffee"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "tea",
+                "synonyms": [
+                  "tea packets",
+                  "tea satchels"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "mattress",
+                "synonyms": [
+                  "bed",
+                  "bed mattress"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "newspaper",
+                "synonyms": [
+                  "newspapers"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "ear plugs",
+                "synonyms": [
+                  "ear plug"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "blanket",
+                "synonyms": [
+                  "blankets",
+                  "bed blankets"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "iron",
+                "synonyms": [
+                  "hot iron",
+                  "ironing machine",
+                  "ironing tool",
+                  "steam iron",
+                  "electric iron",
+                  "flat iron",
+                  "smoothing iron"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "ironing board"
+              }
+            },
+            {
+              "name": {
+                "value": "hair dryer",
+                "synonyms": [
+                  "hair blower",
+                  "hair dry machine",
+                  "blowing machine",
+                  "hairblower"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "ice bucket",
+                "synonyms": [
+                  "bucket of ice",
+                  "ice",
+                  "ice cubes",
+                  "ice cube"
+                ]
+              }
+            }
+          ],
+          "name": "housekeepingItem"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "open",
+                "synonyms": [
+                  "open",
+                  "opens",
+                  "opening time",
+                  "opening hours",
+                  "operating hours",
+                  "open time"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "close",
+                "synonyms": [
+                  "closing time",
+                  "closes",
+                  "close time",
+                  "closing hour",
+                  "close hour"
+                ]
+              }
+            }
+          ],
+          "name": "timing_type"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "starbucks"
+              }
+            },
+            {
+              "name": {
+                "value": "macdonalds"
+              }
+            }
+          ],
+          "name": "restaurant"
+        }
+      ]
+    },
+    "dialog": {
+      "intents": [
+        {
+          "name": "askFacilityTime",
+          "confirmationRequired": false,
+          "slots": [
+            {
+              "name": "facility",
+              "type": "facility",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Intent-askFacilityTime.IntentSlot-facility"
+              }
+            },
+            {
+              "name": "timing_type",
+              "type": "timing_type",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Intent-askFacilityTime.IntentSlot-timing_type"
+              }
+            }
+          ]
+        },
+        {
+          "name": "orderHousekeepingItem",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent-orderHousekeepingItem"
+          },
+          "slots": [
+            {
+              "name": "number",
+              "type": "AMAZON.NUMBER",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Intent-orderHousekeepingItem.IntentSlot-number"
+              }
+            },
+            {
+              "name": "housekeepingItem",
+              "type": "housekeepingItem",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Intent-orderHousekeepingItem.IntentSlot-housekeepingItem"
+              }
+            },
+            {
+              "name": "counting_unit",
+              "type": "counting_unit",
+              "elicitationRequired": false,
+              "confirmationRequired": false
+            }
+          ]
+        }
+      ]
+    },
+    "prompts": [
+      {
+        "id": "Elicit.Intent-askFacilityTime.IntentSlot-facility",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Where?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Intent-askFacilityTime.IntentSlot-timing_type",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Opening or closing time?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent-orderHousekeepingItem",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "You requested for {number} {housekeepingItem}. Is that correct?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Intent-orderHousekeepingItem.IntentSlot-number",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "how many?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Intent-orderHousekeepingItem.IntentSlot-housekeepingItem",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What do you need?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.965866617741.8546317127",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "where"
+          }
+        ]
+      }
+    ]
+  }
+}
