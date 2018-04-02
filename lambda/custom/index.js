@@ -85,9 +85,9 @@ const handlers = {
             }
     },
     'askFacilityTime': function () {
-        var filledSlots = handleOrderHousekeepingItemSlots.call(this);
+        var filledSlots = handleGeneralSlots.call(this);
         var facility = this.event.request.intent.slots.facility.value;
-        
+        var timing_type = this.event.request.intent.slots.timing_type.value;
         var facilityOpeningTimes = {
             gym: {
                 openingTime: '6am',
@@ -109,15 +109,15 @@ const handlers = {
         
         var openingTime = facilityOpeningTimes[facility]["openingTime"];
         var closingTime = facilityOpeningTimes[facility]["closingTime"];
-        
-        var timing_type = this.event.request.intent.slots.timing_type.value;
-        
+               
         if (timing_type === 'open') {
             var speechOutput = "The " + facility + " opens at " + openingTime; 
-        } else {
+        } else if (timing_type === 'close') {
             var speechOutput = "The " + facility + " closes at " + closingTime;
-        }
-        
+        } else if (timing_type === 'operating_hours') {
+        	var speechOutput = "The " + facility + "'s operating hours are from " + openingTime + " to " + closingTime;
+        };
+
         this.response.speak(speechOutput);
         this.emit(":responseReady");
     },
@@ -150,9 +150,12 @@ exports.handler = function (event, context, callback) {
 };
 
 // User Defined Handlers
-function handleOrderHousekeepingItemSlots() {
+function handleGeneralSlots() {
     if (this.event.request.dialogState === "STARTED") {
-        let updatedIntent = this.event.request.intent;
+    	for (let key in this.event.request.intent.slots) {
+    		this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    	};
+    	let updatedIntent = this.event.request.intent;
         this.emit(':delegate',updatedIntent);
     } else if (this.event.request.dialogState !== "COMPLETED") {
         this.emit(":delegate");
