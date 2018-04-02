@@ -126,19 +126,52 @@ const handlers = {
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
     },
-    'askRestaurantTime': function () {
-    	var restaurant = this.event.request.intent.slots.restaurant.value;
-    	
-    	if (restaurant == 'Macdonalds') {
-    		var speechOutput = restaurant + ' opens at 1am';
-    	} else if (restaurant == 'Starbucks') {
-    		var speechOutput = restaurant + ' opens at 10am';
-    	};
+    'askRestaurantGeneral': function () {
+        var filledSlots = handleGeneralSlots.call(this);
 
+        var restaurant = this.event.request.intent.slots.restaurant.value;
 
-    	this.response.speak(speechOutput);
-        this.emit(":responseReady");	
-    	
+		if (restaurant == 'sea_breeze_cafe') {
+            var speechOutput = restaurant + ' is located next to the Main Wing pool. It is open from 630am to 11pm';
+
+        } else if (restaurant == 'charm_thai') {
+            var speechOutput = restaurant + ' is located at the Busakorn Wing. It is open from 630am to 11pm.';
+
+        } else if (restaurant == 'poolside_bar') {
+            var speechOutput = restaurant + ' overlooks the ocean by the pool and it is open from 9am to 8pm';
+
+        } else if (restaurant == 'terrazzo') {
+            var speechOutput = restaurant + ' is located at the main wing and is open from 11am to 1130pm.';
+
+        } else if (restaurant == 'sam_steak') {
+            var speechOutput = restaurant + ' is located at the main wing. It is open from 6pm to 12am.';
+        };
+
+        this.response.speak(speechOutput);
+        this.emit(":responseReady");
+    },
+    'askFacilityLocation': function () {
+        var filledSlots = handleGeneralSlots.call(this);
+        var facility = this.event.request.intent.slots.facility.value;
+        var facilityLocation = {
+            gym: {
+                location: '15th Floor'
+            },
+            spa: {
+                location: '15th Floor'
+            },
+            pool: {
+                location: 'Ground Floor'
+            },
+            hair_salon: {
+                location: 'Ground Floor'
+            }
+        };
+        
+        var location = facilityLocation[facility]["location"];
+        var speechOutput = "The " + facility + " is located on the " + location; 
+        this.response.speak(speechOutput);
+        this.emit(":responseReady");
     }
 };
 
