@@ -126,19 +126,39 @@ const handlers = {
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
     },
-    'askRestaurantTime': function () {
-    	var restaurant = this.event.request.intent.slots.restaurant.value;
-    	
-    	if (restaurant == 'Macdonalds') {
-    		var speechOutput = restaurant + ' opens at 1am';
-    	} else if (restaurant == 'Starbucks') {
-    		var speechOutput = restaurant + ' opens at 10am';
-    	};
+    'askSmokingLocation': function () {
+    	var speechOutput = 'The smoking area is located on the fifth floor next to the lift lobby.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askPet': function () {
+    	var speechOutput = 'Pets are not allowed within hotel premises.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askRestaurantGeneral': function () {
+        var filledSlots = handleGeneralSlots.call(this);
 
+        var restaurant = this.event.request.intent.slots.restaurant.value;
+    	
+        if (restaurant == 'sea_breeze_cafe') {
+            var speechOutput = restaurant + ' is located next to the Main Wing pool. It is open from 630am to 11pm';
+
+        } else if (restaurant == 'charm_thai') {
+            var speechOutput = restaurant + ' is located at the Busakorn Wing. It is open from 630am to 11pm.';
+        
+        } else if (restaurant == 'poolside_bar') {
+            var speechOutput = restaurant + ' overlooks the ocean by the pool and it is open from 9am to 8pm';
+        
+        } else if (restaurant == 'terrazzo') {
+            var speechOutput = restaurant + ' is located at the main wing and is open from 11am to 1130pm.';
+        
+        } else if (restaurant == 'sam_steak') {
+            var speechOutput = restaurant + ' is located at the main wing. It is open from 6pm to 12am.';    
+    	};
 
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
-    	
     }
 };
 
