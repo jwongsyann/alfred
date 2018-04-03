@@ -85,9 +85,9 @@ const handlers = {
             }
     },
     'askFacilityTime': function () {
-        var filledSlots = handleOrderHousekeepingItemSlots.call(this);
+        var filledSlots = handleGeneralSlots.call(this);
         var facility = this.event.request.intent.slots.facility.value;
-        
+        var timing_type = this.event.request.intent.slots.timing_type.value;
         var facilityOpeningTimes = {
             gym: {
                 openingTime: '6am',
@@ -109,15 +109,15 @@ const handlers = {
         
         var openingTime = facilityOpeningTimes[facility]["openingTime"];
         var closingTime = facilityOpeningTimes[facility]["closingTime"];
-        
-        var timing_type = this.event.request.intent.slots.timing_type.value;
-        
+               
         if (timing_type === 'open') {
             var speechOutput = "The " + facility + " opens at " + openingTime; 
-        } else {
+        } else if (timing_type === 'close') {
             var speechOutput = "The " + facility + " closes at " + closingTime;
-        }
-        
+        } else if (timing_type === 'operating_hours') {
+        	var speechOutput = "The " + facility + "'s operating hours are from " + openingTime + " to " + closingTime;
+        };
+
         this.response.speak(speechOutput);
         this.emit(":responseReady");
     },
@@ -140,25 +140,48 @@ const handlers = {
         var filledSlots = handleGeneralSlots.call(this);
 
         var restaurant = this.event.request.intent.slots.restaurant.value;
-    	
-        if (restaurant == 'sea_breeze_cafe') {
+
+		if (restaurant == 'sea_breeze_cafe') {
             var speechOutput = restaurant + ' is located next to the Main Wing pool. It is open from 630am to 11pm';
 
         } else if (restaurant == 'charm_thai') {
             var speechOutput = restaurant + ' is located at the Busakorn Wing. It is open from 630am to 11pm.';
-        
+
         } else if (restaurant == 'poolside_bar') {
             var speechOutput = restaurant + ' overlooks the ocean by the pool and it is open from 9am to 8pm';
-        
+
         } else if (restaurant == 'terrazzo') {
             var speechOutput = restaurant + ' is located at the main wing and is open from 11am to 1130pm.';
-        
-        } else if (restaurant == 'sam_steak') {
-            var speechOutput = restaurant + ' is located at the main wing. It is open from 6pm to 12am.';    
-    	};
 
-    	this.response.speak(speechOutput);
-        this.emit(":responseReady");	
+        } else if (restaurant == 'sam_steak') {
+            var speechOutput = restaurant + ' is located at the main wing. It is open from 6pm to 12am.';
+        };
+
+        this.response.speak(speechOutput);
+        this.emit(":responseReady");
+    },
+    'askFacilityLocation': function () {
+        var filledSlots = handleGeneralSlots.call(this);
+        var facility = this.event.request.intent.slots.facility.value;
+        var facilityLocation = {
+            gym: {
+                location: '15th Floor'
+            },
+            spa: {
+                location: '15th Floor'
+            },
+            pool: {
+                location: 'Ground Floor'
+            },
+            hair_salon: {
+                location: 'Ground Floor'
+            }
+        };
+        
+        var location = facilityLocation[facility]["location"];
+        var speechOutput = "The " + facility + " is located on the " + location; 
+        this.response.speak(speechOutput);
+        this.emit(":responseReady");
     }
 };
 
@@ -170,9 +193,12 @@ exports.handler = function (event, context, callback) {
 };
 
 // User Defined Handlers
-function handleOrderHousekeepingItemSlots() {
+function handleGeneralSlots() {
     if (this.event.request.dialogState === "STARTED") {
-        let updatedIntent = this.event.request.intent;
+    	for (let key in this.event.request.intent.slots) {
+    		this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    	};
+    	let updatedIntent = this.event.request.intent;
         this.emit(':delegate',updatedIntent);
     } else if (this.event.request.dialogState !== "COMPLETED") {
         this.emit(":delegate");
