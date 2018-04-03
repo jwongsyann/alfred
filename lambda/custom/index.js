@@ -73,16 +73,14 @@ const handlers = {
         this.response.speak(STOP_MESSAGE);
         this.emit(':responseReady');
     },
-    'reqHousekeepingItem': function () {
-        const intentObj = this.event.request.intent;
-            if (intentObj.confirmationStatus === 'CONFIRMED') {
-                var speechOutput = "Ok, I will inform housekeeping immediately!"
-                this.response.speak(speechOutput);
-                this.emit(':responseReady');
-            } else if (intentObj.confirmationStatus !== 'CONFIRMED') {
-                var updatedIntent = handleOrderHousekeepingItemSlots.call(this);
-                this.emit(":confirmIntent",updatedIntent);
-            }
+    'orderHousekeepingItem': function () {
+        var filledSlots = handleGeneralSlots.call(this);
+        var number = this.event.request.intent.slots.number.value;
+        var housekeepingItem = this.event.request.intent.slots.housekeepingItem.value;
+
+        var speechOutput = number + " " + housekeepingItem + " coming right up!"
+        this.response.speak(speechOutput);
+        this.emit(":responseReady");
     },
     'askFacilityTime': function () {
         var filledSlots = handleGeneralSlots.call(this);
@@ -184,6 +182,20 @@ exports.handler = function (event, context, callback) {
 
 // User Defined Handlers
 function handleGeneralSlots() {
+    if (this.event.request.dialogState === "STARTED") {
+    	for (let key in this.event.request.intent.slots) {
+    		this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    	};
+    	let updatedIntent = this.event.request.intent;
+        this.emit(':delegate',updatedIntent);
+    } else if (this.event.request.dialogState !== "COMPLETED") {
+        this.emit(":delegate");
+    } else {
+        return this.event.request.intent;
+    };
+};
+
+function handleGeneralSlotsWithIntentConfirmation(confirmationMsg) {
     if (this.event.request.dialogState === "STARTED") {
     	for (let key in this.event.request.intent.slots) {
     		this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
