@@ -126,6 +126,16 @@ const handlers = {
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
     },
+    'askSmokingLocation': function () {
+    	var speechOutput = 'The smoking area is located on the fifth floor next to the lift lobby.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askPet': function () {
+    	var speechOutput = 'Pets are not allowed within hotel premises.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
     'askRestaurantGeneral': function () {
         var filledSlots = handleGeneralSlots.call(this);
 
