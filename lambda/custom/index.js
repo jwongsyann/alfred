@@ -156,7 +156,7 @@ const handlers = {
     		let updatedIntent = this.event.request.intent;
         	this.emit(':delegate',updatedIntent);
     	} else if (this.event.request.dialogState !== "COMPLETED") {
-	        this.emit(":delegate");
+	        let intentObj = this.event.request.intent;
 	    } else {
 	        return this.event.request.intent;
 	    };
@@ -174,7 +174,7 @@ exports.handler = function (event, context, callback) {
 // Common User Defined Functions - Don't Touch These Unless you really have to!
 //=========================================================================================================================================
 function handleGeneralSlots() {
-    if (this.event.request.dialogState === "STARTED") {
+    if (this.event.request.dialogState !== "COMPLETED") {
     	for (let key in this.event.request.intent.slots) {
     		if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
     			this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
@@ -182,8 +182,6 @@ function handleGeneralSlots() {
     	};
     	let updatedIntent = this.event.request.intent;
         this.emit(':delegate',updatedIntent);
-    } else if (this.event.request.dialogState !== "COMPLETED") {
-        this.emit(":delegate");
     } else {
         return this.event.request.intent;
     };
