@@ -1,51 +1,26 @@
 /* eslint-disable  func-names */
 /* eslint quote-props: ["error", "consistent"]*/
-/**
- * This sample demonstrates a simple skill built with the Amazon Alexa Skills
- * nodejs skill development kit.
- * This sample supports multiple lauguages. (en-US, en-GB, de-DE).
- * The Intent Schema, Custom Slots and Sample Utterances for this skill, as well
- * as testing instructions are located at https://github.com/alexa/skill-sample-nodejs-fact
- **/
 
 'use strict';
 const Alexa = require('alexa-sdk');
 
 //=========================================================================================================================================
-//TODO: The items below this comment need your attention.
+// Don't touch this part
 //=========================================================================================================================================
 
 //Replace with your app ID (OPTIONAL).  You can find this value at the top of your skill's page on http://developer.amazon.com.
 //Make sure to enclose your value in quotes, like this: const APP_ID = 'amzn1.ask.skill.bb4045e6-b3e8-4133-b650-72923c5980f1';
 const APP_ID = 'amzn1.ask.skill.2f9cd831-6df7-4991-9ef9-93eb7a528b4d';
 
-const SKILL_NAME = 'Space Facts';
-const GET_FACT_MESSAGE = "Here's your fact: ";
-const HELP_MESSAGE = 'You can say tell me a space fact, or, you can say exit... What can I help you with?';
+
+// Common Messages Used for Convenience
+const HELP_MESSAGE = 'What can I help you with?';
 const HELP_REPROMPT = 'What can I help you with?';
 const STOP_MESSAGE = 'Goodbye!';
+const HELLO_MESSAGE = 'Hi! I\'m Alfred the Virtual Butler!';
 
 //=========================================================================================================================================
-//TODO: Replace this data with your own.  You can find translations of this data at http://github.com/alexa/skill-sample-node-js-fact/data
-//=========================================================================================================================================
-const data = [
-    'A year on Mercury is just 88 days long.',
-    'Despite being farther from the Sun, Venus experiences higher temperatures than Mercury.',
-    'Venus rotates counter-clockwise, possibly because of a collision in the past with an asteroid.',
-    'On Mars, the Sun appears about half the size as it does on Earth.',
-    'Earth is the only planet not named after a god.',
-    'Jupiter has the shortest day of all the planets.',
-    'The Milky Way galaxy will collide with the Andromeda Galaxy in about 5 billion years.',
-    'The Sun contains 99.86% of the mass in the Solar System.',
-    'The Sun is an almost perfect sphere.',
-    'A total solar eclipse can happen once every 1 to 2 years. This makes them a rare event.',
-    'Saturn radiates two and a half times more energy into space than it receives from the sun.',
-    'The temperature inside the Sun can reach 15 million degrees Celsius.',
-    'The Moon is moving approximately 3.8 cm away from our planet every year.',
-];
-
-//=========================================================================================================================================
-//Editing anything below this line might break your skill.
+// Put your code here for the intents!
 //=========================================================================================================================================
 
 const handlers = {
@@ -53,9 +28,8 @@ const handlers = {
         this.emit('helloIntent');
     },
     'helloIntent': function () {
-        var speechOutput = 'Hi! I\'m Alfred the Virtual Butler!';
         var reprompt = 'What can I do for you?';
-        this.response.speak(speechOutput).listen(reprompt);
+        this.response.speak(HELLO_MESSAGE).listen(reprompt);
         this.emit(':responseReady');
     },
     'AMAZON.HelpIntent': function () {
@@ -72,15 +46,6 @@ const handlers = {
     'AMAZON.StopIntent': function () {
         this.response.speak(STOP_MESSAGE);
         this.emit(':responseReady');
-    },
-    'orderHousekeepingItem': function () {
-        var filledSlots = handleGeneralSlots.call(this);
-        var number = this.event.request.intent.slots.number.value;
-        var housekeepingItem = this.event.request.intent.slots.housekeepingItem.value;
-
-        var speechOutput = number + " " + housekeepingItem + " coming right up!"
-        this.response.speak(speechOutput);
-        this.emit(":responseReady");
     },
     'askFacilityTime': function () {
         var filledSlots = handleGeneralSlots.call(this);
@@ -116,6 +81,29 @@ const handlers = {
         	var speechOutput = "The " + facility + "'s operating hours are from " + openingTime + " to " + closingTime;
         };
 
+        this.response.speak(speechOutput);
+        this.emit(":responseReady");
+    },
+    'askFacilityLocation': function () {
+        var filledSlots = handleGeneralSlots.call(this);
+        var facility = this.event.request.intent.slots.facility.value;
+        var facilityLocation = {
+            gym: {
+                location: '15th Floor'
+            },
+            spa: {
+                location: '15th Floor'
+            },
+            pool: {
+                location: 'Ground Floor'
+            },
+            hair_salon: {
+                location: 'Ground Floor'
+            }
+        };
+        
+        var location = facilityLocation[facility]["location"];
+        var speechOutput = "The " + facility + " is located on the " + location; 
         this.response.speak(speechOutput);
         this.emit(":responseReady");
     },
@@ -158,28 +146,20 @@ const handlers = {
         this.response.speak(speechOutput);
         this.emit(":responseReady");
     },
-    'askFacilityLocation': function () {
-        var filledSlots = handleGeneralSlots.call(this);
-        var facility = this.event.request.intent.slots.facility.value;
-        var facilityLocation = {
-            gym: {
-                location: '15th Floor'
-            },
-            spa: {
-                location: '15th Floor'
-            },
-            pool: {
-                location: 'Ground Floor'
-            },
-            hair_salon: {
-                location: 'Ground Floor'
-            }
-        };
-        
-        var location = facilityLocation[facility]["location"];
-        var speechOutput = "The " + facility + " is located on the " + location; 
-        this.response.speak(speechOutput);
-        this.emit(":responseReady");
+    'reqHousekeepingItem': function () {
+    	if (this.event.request.dialogState === "STARTED") {
+			for (let key in this.event.request.intent.slots) {
+				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
+    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    			};
+    		};
+    		let updatedIntent = this.event.request.intent;
+        	this.emit(':delegate',updatedIntent);
+    	} else if (this.event.request.dialogState !== "COMPLETED") {
+	        this.emit(":delegate");
+	    } else {
+	        return this.event.request.intent;
+	    };
     }
 };
 
@@ -190,11 +170,15 @@ exports.handler = function (event, context, callback) {
     alexa.execute();
 };
 
-// User Defined Handlers
+//=========================================================================================================================================
+// Common User Defined Functions - Don't Touch These Unless you really have to!
+//=========================================================================================================================================
 function handleGeneralSlots() {
     if (this.event.request.dialogState === "STARTED") {
     	for (let key in this.event.request.intent.slots) {
-    		this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    		if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
+    			this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    		};
     	};
     	let updatedIntent = this.event.request.intent;
         this.emit(':delegate',updatedIntent);
@@ -204,17 +188,3 @@ function handleGeneralSlots() {
         return this.event.request.intent;
     };
 };
-
-function handleGeneralSlotsWithIntentConfirmation(confirmationMsg) {
-    if (this.event.request.dialogState === "STARTED") {
-    	for (let key in this.event.request.intent.slots) {
-    		this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-    	};
-    	let updatedIntent = this.event.request.intent;
-        this.emit(':delegate',updatedIntent);
-    } else if (this.event.request.dialogState !== "COMPLETED") {
-        this.emit(":delegate");
-    } else {
-        return this.event.request.intent;
-    };
-}
