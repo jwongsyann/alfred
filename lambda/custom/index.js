@@ -157,8 +157,31 @@ const handlers = {
         	this.emit(':delegate',updatedIntent);
     	} else if (this.event.request.dialogState !== "COMPLETED") {
 	        let intentObj = this.event.request.intent;
+	        let nSlotsFilled = 0;
+	        for (let key in intentObj.slots) {
+	        	if (typeof intentObj.slots[key].value !== 'undefined') {
+	        		nSlotsFilled += 1;
+	        	}
+	        }
+	        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
+	        	let updatedIntent = this.event.request.intent;
+	        	this.emit(':confirmIntent','','',updatedIntent);
+	        } else {
+				for (let key in this.event.request.intent.slots) {
+					if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
+	    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+	    			};
+	    		};
+	    		let updatedIntent = this.event.request.intent;
+	        	this.emit(':delegate',updatedIntent);
+	        };
 	    } else {
-	        return this.event.request.intent;
+	    	let intentObj = this.event.request.intent;
+	    	let number = intentObj.slots.number.value;
+	    	let housekeepingItem = intentObj.slots.housekeepingItem.value;
+	        let speechOutput = "I will inform housekeeping immediately to bring you " + number + ' ' + housekeepingItem;
+	        this.response.speak(speechOutput);
+	        this.emit(':responseReady');
 	    };
     }
 };
