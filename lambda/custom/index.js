@@ -183,7 +183,12 @@ const handlers = {
 	        this.response.speak(speechOutput);
 	        this.emit(':responseReady');
 	    };
-    }
+    },
+    'askBreakfastTime': function () {
+    	var speechOutput = 'Breakfast is served daily from 6am to 10am';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
 };
 
 exports.handler = function (event, context, callback) {
