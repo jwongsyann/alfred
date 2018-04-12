@@ -48,10 +48,10 @@ const handlers = {
         this.emit(':responseReady');
     },
     'askFacilityTime': function () {
-        var filledSlots = handleGeneralSlots.call(this);
-        var facility = this.event.request.intent.slots.facility.value;
-        var timing_type = this.event.request.intent.slots.timing_type.value;
-        var facilityOpeningTimes = {
+        let filledSlots = handleGeneralSlots.call(this);
+        let facility = this.event.request.intent.slots.facility.value;
+        let timing_type = this.event.request.intent.slots.timing_type.value;
+        let facilityOpeningTimes = {
             gym: {
                 openingTime: '6am',
                 closingTime: '10pm'
@@ -70,16 +70,10 @@ const handlers = {
             }
         };
         
-        var openingTime = facilityOpeningTimes[facility]["openingTime"];
-        var closingTime = facilityOpeningTimes[facility]["closingTime"];
-               
-        if (timing_type === 'open') {
-            var speechOutput = "The " + facility + " opens at " + openingTime; 
-        } else if (timing_type === 'close') {
-            var speechOutput = "The " + facility + " closes at " + closingTime;
-        } else if (timing_type === 'operating_hours') {
-        	var speechOutput = "The " + facility + "'s operating hours are from " + openingTime + " to " + closingTime;
-        };
+        let openingTime = facilityOpeningTimes[facility]["openingTime"];
+        let closingTime = facilityOpeningTimes[facility]["closingTime"];
+
+        let speechOutput = "The " + facility + " opens at " + openingTime + " and closes at " + closingTime;
 
         this.response.speak(speechOutput);
         this.emit(":responseReady");
@@ -147,48 +141,14 @@ const handlers = {
         this.emit(":responseReady");
     },
     'reqHousekeepingItem': function () {
-    	if (this.event.request.dialogState === "STARTED") {
-			for (let key in this.event.request.intent.slots) {
-				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-    			};
-    		};
-    		let updatedIntent = this.event.request.intent;
-        	this.emit(':delegate',updatedIntent);
-    	} else if (this.event.request.dialogState !== "COMPLETED") {
-	        let intentObj = this.event.request.intent;
-	        let nSlotsFilled = 0;
-	        for (let key in intentObj.slots) {
-	        	if (typeof intentObj.slots[key].value !== 'undefined') {
-	        		nSlotsFilled += 1;
-	        	}
-	        }
-	        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
-	        	let updatedIntent = this.event.request.intent;
-	        	this.emit(':confirmIntent','','',updatedIntent);
-	        } else {
-				for (let key in this.event.request.intent.slots) {
-					if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-	    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-	    			};
-	    		};
-	    		let updatedIntent = this.event.request.intent;
-	        	this.emit(':delegate',updatedIntent);
-	        };
-	    } else {
-	    	let intentObj = this.event.request.intent;
-	    	let number = intentObj.slots.number.value;
-	    	let housekeepingItem = intentObj.slots.housekeepingItem.value;
-	        let speechOutput = "I will inform housekeeping immediately to bring you " + number + ' ' + housekeepingItem;
-	        this.response.speak(speechOutput);
-	        this.emit(':responseReady');
-	    };
-    },
-    'askBreakfastTime': function () {
-    	var speechOutput = 'Breakfast is served daily from 6am to 10am';
-    	this.response.speak(speechOutput);
-        this.emit(":responseReady");	
-    },
+    	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
+    	let intentObj = this.event.request.intent;
+    	let number = intentObj.slots.number.value;
+    	let housekeepingItem = intentObj.slots.housekeepingItem.value;
+        let speechOutput = "I will inform housekeeping immediately to bring you " + number + ' ' + housekeepingItem;
+        this.response.speak(speechOutput);
+        this.emit(':responseReady');
+    }
 };
 
 exports.handler = function (event, context, callback) {
@@ -202,7 +162,7 @@ exports.handler = function (event, context, callback) {
 // Common User Defined Functions - Don't Touch These Unless you really have to!
 //=========================================================================================================================================
 function handleGeneralSlots() {
-    if (this.event.request.dialogState !== "COMPLETED") {
+    if (this.event.request.dialogState === "STARTED") {
     	for (let key in this.event.request.intent.slots) {
     		if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
     			this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
@@ -212,5 +172,39 @@ function handleGeneralSlots() {
         this.emit(':delegate',updatedIntent);
     } else {
         return this.event.request.intent;
+    };
+};
+
+function handleGeneralSlotsWithIntentConfirmation() {
+	if (this.event.request.dialogState === "STARTED") {
+		for (let key in this.event.request.intent.slots) {
+			if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
+				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+			};
+		};
+		let updatedIntent = this.event.request.intent;
+    	this.emit(':delegate',updatedIntent);
+	} else if (this.event.request.dialogState !== "COMPLETED") {
+        let intentObj = this.event.request.intent;
+        let nSlotsFilled = 0;
+        for (let key in intentObj.slots) {
+        	if (typeof intentObj.slots[key].value !== 'undefined') {
+        		nSlotsFilled += 1;
+        	}
+        }
+        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
+        	let updatedIntent = this.event.request.intent;
+        	this.emit(':confirmIntent','','',updatedIntent);
+        } else {
+			for (let key in this.event.request.intent.slots) {
+				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
+    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    			};
+    		};
+    		let updatedIntent = this.event.request.intent;
+        	this.emit(':delegate',updatedIntent);
+        };
+    } else {
+    	return this.event.request.intent;
     };
 };
