@@ -111,8 +111,18 @@ const handlers = {
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
     },
+    'askSmokingInRoom': function () {
+    	var speechOutput = 'Smoking is prohibited in guest rooms. Please smoke at the designated smoking area on the fifth floor next to the lift lobby.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
     'askPet': function () {
     	var speechOutput = 'Pets are not allowed within hotel premises.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askMaxPeopleInRoom': function () {
+    	var speechOutput = 'Please refrain from bringing external guests into your hotel room.';
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
     },
