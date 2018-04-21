@@ -50,7 +50,6 @@ const handlers = {
     'askFacilityTime': function () {
         let filledSlots = handleGeneralSlots.call(this);
         let facility = this.event.request.intent.slots.facility.value;
-        let timing_type = this.event.request.intent.slots.timing_type.value;
         let facilityOpeningTimes = {
             gym: {
                 openingTime: '6am',
@@ -74,7 +73,7 @@ const handlers = {
         let closingTime = facilityOpeningTimes[facility]["closingTime"];
 
         let speechOutput = "The " + facility + " opens at " + openingTime + " and closes at " + closingTime;
-
+      
         this.response.speak(speechOutput);
         this.emit(":responseReady");
     },
@@ -151,19 +150,19 @@ const handlers = {
 
         var restaurant = this.event.request.intent.slots.restaurant.value;
 
-		if (restaurant == 'sea_breeze_cafe') {
+		if (restaurant == 'sea breeze cafe') {
             var speechOutput = restaurant + ' is located next to the Main Wing pool. It is open from 630am to 11pm';
 
-        } else if (restaurant == 'charm_thai') {
+        } else if (restaurant == 'charm thai') {
             var speechOutput = restaurant + ' is located at the Busakorn Wing. It is open from 630am to 11pm.';
 
-        } else if (restaurant == 'poolside_bar') {
+        } else if (restaurant == 'poolside bar') {
             var speechOutput = restaurant + ' overlooks the ocean by the pool and it is open from 9am to 8pm';
 
         } else if (restaurant == 'terrazzo') {
             var speechOutput = restaurant + ' is located at the main wing and is open from 11am to 1130pm.';
 
-        } else if (restaurant == 'sam_steak') {
+        } else if (restaurant == "sam's steak and grill") {
             var speechOutput = restaurant + ' is located at the main wing. It is open from 6pm to 12am.';
         };
 
@@ -198,6 +197,20 @@ const handlers = {
 	        this.response.speak(speechOutput);
 	        this.emit(':responseReady');	
     	};
+    },
+    'reqRoomFood': function () {
+    	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
+    	let intentObj = this.event.request.intent;
+    	if (intentObj.confirmationStatus === "DENIED") {
+    		let speechOutput = "Apologies, I must have misunderstood you";
+    		this.response.speak(speechOutput);
+    		this.emit(":responseReady");
+    	} else {
+	    	let dish = intentObj.slots.dish.value;
+	        let speechOutput = "I will inform room service immediately to bring you " + ' ' + dish;
+	        this.response.speak(speechOutput);
+	        this.emit(':responseReady');
+    	};	
     }
 };
 
@@ -213,27 +226,74 @@ exports.handler = function (event, context, callback) {
 //=========================================================================================================================================
 function handleGeneralSlots() {
     if (this.event.request.dialogState === "STARTED") {
-    	for (let key in this.event.request.intent.slots) {
-    		if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-    			this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+		let intentObj = this.event.request.intent;
+        let nSlotsFilled = 0;
+        for (let key in intentObj.slots) {
+        	if (typeof intentObj.slots[key].value !== 'undefined') {
+        		nSlotsFilled += 1;
+        	}
+        }
+        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
+        	for (let key in this.event.request.intent.slots) {
+				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
+    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    			};
     		};
-    	};
-    	let updatedIntent = this.event.request.intent;
-        this.emit(':delegate',updatedIntent);
+        	return this.event.request.intent;
+        } else {
+			for (let key in this.event.request.intent.slots) {
+				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
+    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    			};
+    		};
+    		let updatedIntent = this.event.request.intent;
+        	this.emit(':delegate',updatedIntent);
+        };
+    } else if (this.event.request.dialogState !== "COMPLETED") {
+        let intentObj = this.event.request.intent;
+        let nSlotsFilled = 0;
+        for (let key in intentObj.slots) {
+        	if (typeof intentObj.slots[key].value !== 'undefined') {
+        		nSlotsFilled += 1;
+        	}
+        }
+        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
+        	return this.event.request.intent;
+        } else {
+			for (let key in this.event.request.intent.slots) {
+				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
+    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    			};
+    		};
+    		let updatedIntent = this.event.request.intent;
+        	this.emit(':delegate',updatedIntent);
+        };
     } else {
-        return this.event.request.intent;
+    	return this.event.request.intent;
     };
 };
 
 function handleGeneralSlotsWithIntentConfirmation() {
 	if (this.event.request.dialogState === "STARTED") {
-		for (let key in this.event.request.intent.slots) {
-			if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-			};
-		};
-		let updatedIntent = this.event.request.intent;
-    	this.emit(':delegate',updatedIntent);
+        let intentObj = this.event.request.intent;
+        let nSlotsFilled = 0;
+        for (let key in intentObj.slots) {
+        	if (typeof intentObj.slots[key].value !== 'undefined') {
+        		nSlotsFilled += 1;
+        	}
+        }
+        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
+        	let updatedIntent = this.event.request.intent;
+        	this.emit(':confirmIntent','','',updatedIntent);
+        } else {
+			for (let key in this.event.request.intent.slots) {
+				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
+    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    			};
+    		};
+    		let updatedIntent = this.event.request.intent;
+        	this.emit(':delegate',updatedIntent);
+        };
 	} else if (this.event.request.dialogState !== "COMPLETED") {
         let intentObj = this.event.request.intent;
         let nSlotsFilled = 0;
