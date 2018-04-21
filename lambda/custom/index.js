@@ -126,6 +126,16 @@ const handlers = {
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
     },
+    'askRoomEntertainment': function () {
+    	var speechOutput = 'We have over 6000 movies and telvision shows available on Netflix, as well as access to over 30 million songs from Spotify and radio on our bluetooth media device.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askRoomTvChannel': function () {
+    	var speechOutput = 'Movies are on Channel 100, Sports are on Channel 200 and News are on Channel 300. For more details on channel listing, please refer to our television guide on your room desk.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
     'askRestaurantGeneral': function () {
         var filledSlots = handleGeneralSlots.call(this);
 
