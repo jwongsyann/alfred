@@ -136,6 +136,16 @@ const handlers = {
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
     },
+    'askRoomAircon': function () {
+    	var speechOutput = 'There are individual thermostat controls in each room. Simply turn the dial clockwise to be warmer or anticlockwise for cooler temperatures. There is also a fan speed control at the bottom of the thermostat.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askFoodMenu': function () {
+    	var speechOutput = 'You can see a list of food available located on the menu on your desk. We highly recommend you to try our signature Chicken Rice dish, as well as Nasi Lemak.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
     'askRestaurantGeneral': function () {
         var filledSlots = handleGeneralSlots.call(this);
 
