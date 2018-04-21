@@ -163,11 +163,31 @@ const handlers = {
     'reqHousekeepingItem': function () {
     	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
     	let intentObj = this.event.request.intent;
-    	let number = intentObj.slots.number.value;
-    	let housekeepingItem = intentObj.slots.housekeepingItem.value;
-        let speechOutput = "I will inform housekeeping immediately to bring you " + number + ' ' + housekeepingItem;
-        this.response.speak(speechOutput);
-        this.emit(':responseReady');
+    	if (intentObj.confirmationStatus === "DENIED") {
+    		let speechOutput = "Apologies, I must have misunderstood you";
+    		this.response.speak(speechOutput);
+    		this.emit(":responseReady");
+    	} else {
+	    	let number = intentObj.slots.number.value;
+	    	let housekeepingItem = intentObj.slots.housekeepingItem.value;
+	        let speechOutput = "I will inform housekeeping immediately to bring you " + number + ' ' + housekeepingItem;
+	        this.response.speak(speechOutput);
+	        this.emit(':responseReady');
+    	};	
+    },
+    'reqHousekeepingService': function () {
+    	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
+    	let intentObj = this.event.request.intent;
+    	if (intentObj.confirmationStatus === "DENIED") {
+    		let speechOutput = "Apologies, I must have misunderstood you";
+    		this.response.speak(speechOutput);
+    		this.emit(":responseReady");
+    	} else {
+	    	let housekeepingService = intentObj.slots.housekeepingService.value;
+	        let speechOutput = "I will inform housekeeping immediately to " + housekeepingService;
+	        this.response.speak(speechOutput);
+	        this.emit(':responseReady');	
+    	};
     }
 };
 
@@ -225,6 +245,6 @@ function handleGeneralSlotsWithIntentConfirmation() {
         	this.emit(':delegate',updatedIntent);
         };
     } else {
-    	return this.event.request.intent;
-    };
+		return this.event.request.intent;
+	};
 };
