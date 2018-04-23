@@ -225,64 +225,123 @@ exports.handler = function (event, context, callback) {
 // Common User Defined Functions - Don't Touch These Unless you really have to!
 //=========================================================================================================================================
 function handleGeneralSlots() {
+	let intentObj = this.event.request.intent;
     if (this.event.request.dialogState === "STARTED") {
-		let intentObj = this.event.request.intent;
+    	// Replace intent slot values with resolution values for standardization
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].resolutions !== 'undefined') {
+    			intentObj.slots[key].value = intentObj.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    		};
+    	};
+
+    	// Count number of slots filled
+    	let nSlotsFilled = 0;
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].value !== 'undefined') {
+    			nSlotsFilled += 1;
+    		};
+    	};
+
+    	// Handle if slots not filled
+    	if (nSlotsFilled === Object.keys(intentObj.slots).length) {
+    		return intentObj;
+    	} else {
+    		let updatedIntent = intentObj;
+    		this.emit(':delegate',updatedIntent);
+    	};
+    } else if (this.event.request.dialogState !== "COMPLETED") {
+    	// Replace intent slot values with resolution values for standardization
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].resolutions !== 'undefined') {
+    			intentObj.slots[key].value = intentObj.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    		};
+    	};
+
+    	// Count number of slots filled
+    	let nSlotsFilled = 0;
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].value !== 'undefined') {nSlotsFilled += 1;}
+    	};
+
+    	// Handle if slots not filled
+    	if (nSlotsFilled == Object.keys(intentObj.slots).length) {
+    		return this.event.request.intent;
+    	} else {
+    		let updatedIntent = intentObj;
+    		this.emit(':delegate',updatedIntent);
+    	};
+    } else {
+    	return intentObj;
+    };
+};
+
+function handleGeneralSlotsWithIntentConfirmation() {
+	let intentObj = this.event.request.intent;
+	if (this.event.request.dialogState === "STARTED") {
+		// Replace intent slot values with resolution values for standardization
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].resolutions !== 'undefined') {
+    			intentObj.slots[key].value = intentObj.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    		};
+    	};
+
+    	// Count number of slots filled
+    	let nSlotsFilled = 0;
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].value !== 'undefined') {
+    			nSlotsFilled += 1;
+    		};
+    	};
+
+    	// Handle if slots not filled
+    	if (nSlotsFilled === Object.keys(intentObj.slots).length) {
+    		let updatedIntent = intentObj;
+    		this.emit(':confirmIntent','','',updatedIntent);
+    	} else {
+    		let updatedIntent = intentObj;
+    		this.emit(':delegate',updatedIntent);
+    	};
+	} else if (this.event.request.dialogState !== "COMPLETED") {
+		// Replace intent slot values with resolution values for standardization
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].resolutions !== 'undefined') {
+    			intentObj.slots[key].value = intentObj.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    		};
+    	};
+
+    	// Count number of slots filled
+    	let nSlotsFilled = 0;
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].value !== 'undefined') {
+    			nSlotsFilled += 1;
+    		};
+    	};
+
+    	// Handle if slots not filled
+    	if (nSlotsFilled === Object.keys(intentObj.slots).length) {
+    		let updatedIntent = intentObj;
+    		this.emit(':confirmIntent','','',updatedIntent);
+    	} else {
+    		let updatedIntent = intentObj;
+    		this.emit(':delegate',updatedIntent);
+    	};
+	} else {
+		return intentObj;
+	};
+		/*
+        let intentObj = this.event.request.intent;
         let nSlotsFilled = 0;
         for (let key in intentObj.slots) {
         	if (typeof intentObj.slots[key].value !== 'undefined') {
         		nSlotsFilled += 1;
         	}
-        }
+        };
         if (nSlotsFilled == Object.keys(intentObj.slots).length) {
         	for (let key in this.event.request.intent.slots) {
 				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
     				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
     			};
     		};
-        	return this.event.request.intent;
-        } else {
-			for (let key in this.event.request.intent.slots) {
-				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-    			};
-    		};
-    		let updatedIntent = this.event.request.intent;
-        	this.emit(':delegate',updatedIntent);
-        };
-    } else if (this.event.request.dialogState !== "COMPLETED") {
-        let intentObj = this.event.request.intent;
-        let nSlotsFilled = 0;
-        for (let key in intentObj.slots) {
-        	if (typeof intentObj.slots[key].value !== 'undefined') {
-        		nSlotsFilled += 1;
-        	}
-        }
-        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
-        	return this.event.request.intent;
-        } else {
-			for (let key in this.event.request.intent.slots) {
-				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-    			};
-    		};
-    		let updatedIntent = this.event.request.intent;
-        	this.emit(':delegate',updatedIntent);
-        };
-    } else {
-    	return this.event.request.intent;
-    };
-};
-
-function handleGeneralSlotsWithIntentConfirmation() {
-	if (this.event.request.dialogState === "STARTED") {
-        let intentObj = this.event.request.intent;
-        let nSlotsFilled = 0;
-        for (let key in intentObj.slots) {
-        	if (typeof intentObj.slots[key].value !== 'undefined') {
-        		nSlotsFilled += 1;
-        	}
-        }
-        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
         	let updatedIntent = this.event.request.intent;
         	this.emit(':confirmIntent','','',updatedIntent);
         } else {
@@ -303,6 +362,11 @@ function handleGeneralSlotsWithIntentConfirmation() {
         	}
         }
         if (nSlotsFilled == Object.keys(intentObj.slots).length) {
+        	for (let key in this.event.request.intent.slots) {
+				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
+    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    			};
+    		};
         	let updatedIntent = this.event.request.intent;
         	this.emit(':confirmIntent','','',updatedIntent);
         } else {
@@ -317,4 +381,5 @@ function handleGeneralSlotsWithIntentConfirmation() {
     } else {
 		return this.event.request.intent;
 	};
+	*/
 };
