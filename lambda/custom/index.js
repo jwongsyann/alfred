@@ -198,20 +198,6 @@ const handlers = {
 	        this.emit(':responseReady');	
     	};
     },
-    'reqRoomFood': function () {
-    	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
-    	let intentObj = this.event.request.intent;
-    	if (intentObj.confirmationStatus === "DENIED") {
-    		let speechOutput = "Apologies, I must have misunderstood you";
-    		this.response.speak(speechOutput);
-    		this.emit(":responseReady");
-    	} else {
-	    	let dish = intentObj.slots.dish.value;
-	        let speechOutput = "I will inform room service immediately to bring you " + ' ' + dish;
-	        this.response.speak(speechOutput);
-	        this.emit(':responseReady');
-    	};	
-    },
     'reqTidyRoom': function () {
     	let speechOutput = 'Ok, I will inform housekeeping immediately to make your room';
     	this.response.speak(speechOutput);
