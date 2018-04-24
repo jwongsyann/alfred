@@ -211,6 +211,21 @@ const handlers = {
 	        this.response.speak(speechOutput);
 	        this.emit(':responseReady');
     	};	
+    },
+    'reqTidyRoom': function () {
+    	let speechOutput = 'Ok, I will inform housekeeping immediately to make your room';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'reqLaundryService': function () {
+    	let speechOutput = 'Ok, I will inform housekeeping immediately to attend to your laundry service request';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'reqDoNotDisturb': function () {
+    	let speechOutput = 'Ok, I will set your room status to do not disturb for today.';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
     }
 };
 
@@ -328,58 +343,4 @@ function handleGeneralSlotsWithIntentConfirmation() {
 	} else {
 		return intentObj;
 	};
-		/*
-        let intentObj = this.event.request.intent;
-        let nSlotsFilled = 0;
-        for (let key in intentObj.slots) {
-        	if (typeof intentObj.slots[key].value !== 'undefined') {
-        		nSlotsFilled += 1;
-        	}
-        };
-        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
-        	for (let key in this.event.request.intent.slots) {
-				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-    			};
-    		};
-        	let updatedIntent = this.event.request.intent;
-        	this.emit(':confirmIntent','','',updatedIntent);
-        } else {
-			for (let key in this.event.request.intent.slots) {
-				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-    			};
-    		};
-    		let updatedIntent = this.event.request.intent;
-        	this.emit(':delegate',updatedIntent);
-        };
-	} else if (this.event.request.dialogState !== "COMPLETED") {
-        let intentObj = this.event.request.intent;
-        let nSlotsFilled = 0;
-        for (let key in intentObj.slots) {
-        	if (typeof intentObj.slots[key].value !== 'undefined') {
-        		nSlotsFilled += 1;
-        	}
-        }
-        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
-        	for (let key in this.event.request.intent.slots) {
-				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-    			};
-    		};
-        	let updatedIntent = this.event.request.intent;
-        	this.emit(':confirmIntent','','',updatedIntent);
-        } else {
-			for (let key in this.event.request.intent.slots) {
-				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-    			};
-    		};
-    		let updatedIntent = this.event.request.intent;
-        	this.emit(':delegate',updatedIntent);
-        };
-    } else {
-		return this.event.request.intent;
-	};
-	*/
 };
