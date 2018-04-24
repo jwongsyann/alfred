@@ -189,6 +189,16 @@ const handlers = {
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
     },
+    'askBreakfastIncluded': function () {
+        var speechOutput = 'Breakfast is included and will be served from 6am to 9am at the lobby cafe';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askBreakfastLocation': function () {
+    	var speechOutput = 'Breakfast is available at the lobby cafe';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    }
 };
 
 exports.handler = function (event, context, callback) {
