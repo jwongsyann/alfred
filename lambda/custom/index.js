@@ -50,7 +50,6 @@ const handlers = {
     'askFacilityTime': function () {
         let filledSlots = handleGeneralSlots.call(this);
         let facility = this.event.request.intent.slots.facility.value;
-        let timing_type = this.event.request.intent.slots.timing_type.value;
         let facilityOpeningTimes = {
             gym: {
                 openingTime: '6am',
@@ -74,7 +73,7 @@ const handlers = {
         let closingTime = facilityOpeningTimes[facility]["closingTime"];
 
         let speechOutput = "The " + facility + " opens at " + openingTime + " and closes at " + closingTime;
-
+      
         this.response.speak(speechOutput);
         this.emit(":responseReady");
     },
@@ -111,8 +110,38 @@ const handlers = {
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
     },
+    'askSmokingInRoom': function () {
+    	var speechOutput = 'Smoking is prohibited in guest rooms. Please smoke at the designated smoking area on the fifth floor next to the lift lobby.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
     'askPet': function () {
     	var speechOutput = 'Pets are not allowed within hotel premises.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askMaxPeopleInRoom': function () {
+    	var speechOutput = 'Please refrain from bringing external guests into your hotel room.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askRoomEntertainment': function () {
+    	var speechOutput = 'We have over 6000 movies and telvision shows available on Netflix, as well as access to over 30 million songs from Spotify and radio on our bluetooth media device.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askRoomTvChannel': function () {
+    	var speechOutput = 'Movies are on Channel 100, Sports are on Channel 200 and News are on Channel 300. For more details on channel listing, please refer to our television guide on your room desk.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askRoomAircon': function () {
+    	var speechOutput = 'There are individual thermostat controls in each room. Simply turn the dial clockwise to be warmer or anticlockwise for cooler temperatures. There is also a fan speed control at the bottom of the thermostat.';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askFoodMenu': function () {
+    	var speechOutput = 'You can see a list of food available located on the menu on your desk. We highly recommend you to try our signature Chicken Rice dish, as well as Nasi Lemak.';
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
     },
@@ -121,19 +150,19 @@ const handlers = {
 
         var restaurant = this.event.request.intent.slots.restaurant.value;
 
-		if (restaurant == 'sea_breeze_cafe') {
+		if (restaurant == 'sea breeze cafe') {
             var speechOutput = restaurant + ' is located next to the Main Wing pool. It is open from 630am to 11pm';
 
-        } else if (restaurant == 'charm_thai') {
+        } else if (restaurant == 'charm thai') {
             var speechOutput = restaurant + ' is located at the Busakorn Wing. It is open from 630am to 11pm.';
 
-        } else if (restaurant == 'poolside_bar') {
+        } else if (restaurant == 'poolside bar') {
             var speechOutput = restaurant + ' overlooks the ocean by the pool and it is open from 9am to 8pm';
 
         } else if (restaurant == 'terrazzo') {
             var speechOutput = restaurant + ' is located at the main wing and is open from 11am to 1130pm.';
 
-        } else if (restaurant == 'sam_steak') {
+        } else if (restaurant == "sam's steak and grill") {
             var speechOutput = restaurant + ' is located at the main wing. It is open from 6pm to 12am.';
         };
 
@@ -141,36 +170,13 @@ const handlers = {
         this.emit(":responseReady");
     },
     'reqHousekeepingItem': function () {
-    	if (this.event.request.dialogState === "STARTED") {
-			for (let key in this.event.request.intent.slots) {
-				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-    			};
-    		};
-    		let updatedIntent = this.event.request.intent;
-        	this.emit(':delegate',updatedIntent);
-    	} else if (this.event.request.dialogState !== "COMPLETED") {
-	        let intentObj = this.event.request.intent;
-	        let nSlotsFilled = 0;
-	        for (let key in intentObj.slots) {
-	        	if (typeof intentObj.slots[key].value !== 'undefined') {
-	        		nSlotsFilled += 1;
-	        	}
-	        }
-	        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
-	        	let updatedIntent = this.event.request.intent;
-	        	this.emit(':confirmIntent','','',updatedIntent);
-	        } else {
-				for (let key in this.event.request.intent.slots) {
-					if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-	    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-	    			};
-	    		};
-	    		let updatedIntent = this.event.request.intent;
-	        	this.emit(':delegate',updatedIntent);
-	        };
-	    } else {
-	    	let intentObj = this.event.request.intent;
+    	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
+    	let intentObj = this.event.request.intent;
+    	if (intentObj.confirmationStatus === "DENIED") {
+    		let speechOutput = "Apologies, I must have misunderstood you";
+    		this.response.speak(speechOutput);
+    		this.emit(":responseReady");
+    	} else {
 	    	let number = intentObj.slots.number.value;
 	    	let housekeepingItem = intentObj.slots.housekeepingItem.value;
 	        let speechOutput = "I will inform housekeeping immediately to bring you " + number + ' ' + housekeepingItem;
@@ -192,6 +198,46 @@ const handlers = {
     	var speechOutput = 'Breakfast is available at the lobby cafe';
     	this.response.speak(speechOutput);
         this.emit(":responseReady");	
+    	};	
+    },
+    'reqHousekeepingService': function () {
+    	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
+    	let intentObj = this.event.request.intent;
+    	if (intentObj.confirmationStatus === "DENIED") {
+    		let speechOutput = "Apologies, I must have misunderstood you";
+    		this.response.speak(speechOutput);
+    		this.emit(":responseReady");
+    	} else {
+	    	let housekeepingService = intentObj.slots.housekeepingService.value;
+	        let speechOutput = "I will inform housekeeping immediately to " + housekeepingService;
+	        this.response.speak(speechOutput);
+	        this.emit(':responseReady');	
+    	};
+    },
+    'reqTidyRoom': function () {
+    	let speechOutput = 'Ok, I will inform housekeeping immediately to make your room';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'reqLaundryService': function () {
+    	let speechOutput = 'Ok, I will inform housekeeping immediately to attend to your laundry service request';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'reqDoNotDisturb': function () {
+    	let speechOutput = 'Ok, I will set your room status to do not disturb for today.';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'askCurrencyExchange': function () {
+    	let speechOutput = 'Sure, we have foreign currency exchange services at the front desk. Please approach the front desk for more information.';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'askLuggageStorage': function () {
+    	let speechOutput = 'Sure, you can leave the luggage with the front desk. I can get the bell boy to collect your luggage for storage whenever you are ready!';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
     }
 };
 
@@ -206,49 +252,107 @@ exports.handler = function (event, context, callback) {
 // Common User Defined Functions - Don't Touch These Unless you really have to!
 //=========================================================================================================================================
 function handleGeneralSlots() {
+	let intentObj = this.event.request.intent;
     if (this.event.request.dialogState === "STARTED") {
-    	for (let key in this.event.request.intent.slots) {
-    		if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-    			this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    	// Replace intent slot values with resolution values for standardization
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].resolutions !== 'undefined') {
+    			intentObj.slots[key].value = intentObj.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
     		};
     	};
-    	let updatedIntent = this.event.request.intent;
-        this.emit(':delegate',updatedIntent);
+
+    	// Count number of slots filled
+    	let nSlotsFilled = 0;
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].value !== 'undefined') {
+    			nSlotsFilled += 1;
+    		};
+    	};
+
+    	// Handle if slots not filled
+    	if (nSlotsFilled === Object.keys(intentObj.slots).length) {
+    		return intentObj;
+    	} else {
+    		let updatedIntent = intentObj;
+    		this.emit(':delegate',updatedIntent);
+    	};
+    } else if (this.event.request.dialogState !== "COMPLETED") {
+    	// Replace intent slot values with resolution values for standardization
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].resolutions !== 'undefined') {
+    			intentObj.slots[key].value = intentObj.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    		};
+    	};
+
+    	// Count number of slots filled
+    	let nSlotsFilled = 0;
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].value !== 'undefined') {nSlotsFilled += 1;}
+    	};
+
+    	// Handle if slots not filled
+    	if (nSlotsFilled == Object.keys(intentObj.slots).length) {
+    		return this.event.request.intent;
+    	} else {
+    		let updatedIntent = intentObj;
+    		this.emit(':delegate',updatedIntent);
+    	};
     } else {
-        return this.event.request.intent;
+    	return intentObj;
     };
 };
 
 function handleGeneralSlotsWithIntentConfirmation() {
+	let intentObj = this.event.request.intent;
 	if (this.event.request.dialogState === "STARTED") {
-		for (let key in this.event.request.intent.slots) {
-			if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-			};
-		};
-		let updatedIntent = this.event.request.intent;
-    	this.emit(':delegate',updatedIntent);
-	} else if (this.event.request.dialogState !== "COMPLETED") {
-        let intentObj = this.event.request.intent;
-        let nSlotsFilled = 0;
-        for (let key in intentObj.slots) {
-        	if (typeof intentObj.slots[key].value !== 'undefined') {
-        		nSlotsFilled += 1;
-        	}
-        }
-        if (nSlotsFilled == Object.keys(intentObj.slots).length) {
-        	let updatedIntent = this.event.request.intent;
-        	this.emit(':confirmIntent','','',updatedIntent);
-        } else {
-			for (let key in this.event.request.intent.slots) {
-				if (typeof this.event.request.intent.slots[key].resolutions !== 'undefined') {
-    				this.event.request.intent.slots[key].value = this.event.request.intent.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
-    			};
+		// Replace intent slot values with resolution values for standardization
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].resolutions !== 'undefined') {
+    			intentObj.slots[key].value = intentObj.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
     		};
-    		let updatedIntent = this.event.request.intent;
-        	this.emit(':delegate',updatedIntent);
-        };
-    } else {
-    	return this.event.request.intent;
-    };
+    	};
+
+    	// Count number of slots filled
+    	let nSlotsFilled = 0;
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].value !== 'undefined') {
+    			nSlotsFilled += 1;
+    		};
+    	};
+
+    	// Handle if slots not filled
+    	if (nSlotsFilled === Object.keys(intentObj.slots).length) {
+    		let updatedIntent = intentObj;
+    		this.emit(':confirmIntent','','',updatedIntent);
+    	} else {
+    		let updatedIntent = intentObj;
+    		this.emit(':delegate',updatedIntent);
+    	};
+	} else if (this.event.request.dialogState !== "COMPLETED") {
+		// Replace intent slot values with resolution values for standardization
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].resolutions !== 'undefined') {
+    			intentObj.slots[key].value = intentObj.slots[key].resolutions.resolutionsPerAuthority[0].values[0].value.name;
+    		};
+    	};
+
+    	// Count number of slots filled
+    	let nSlotsFilled = 0;
+    	for (let key in intentObj.slots) {
+    		if (typeof intentObj.slots[key].value !== 'undefined') {
+    			nSlotsFilled += 1;
+    		};
+    	};
+
+    	// Handle if slots not filled
+    	if (nSlotsFilled === Object.keys(intentObj.slots).length) {
+    		let updatedIntent = intentObj;
+    		this.emit(':confirmIntent','','',updatedIntent);
+    	} else {
+    		let updatedIntent = intentObj;
+    		this.emit(':delegate',updatedIntent);
+    	};
+	} else {
+		return intentObj;
+	};
 };
