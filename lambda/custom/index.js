@@ -182,6 +182,22 @@ const handlers = {
 	        let speechOutput = "I will inform housekeeping immediately to bring you " + number + ' ' + housekeepingItem;
 	        this.response.speak(speechOutput);
 	        this.emit(':responseReady');
+	    };
+    },
+    'askBreakfastTime': function () {
+    	var speechOutput = 'Breakfast is served daily from 6am to 10am';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askBreakfastIncluded': function () {
+        var speechOutput = 'Breakfast is included and will be served from 6am to 9am at the lobby cafe';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
+    },
+    'askBreakfastLocation': function () {
+    	var speechOutput = 'Breakfast is available at the lobby cafe';
+    	this.response.speak(speechOutput);
+        this.emit(":responseReady");	
     	};	
     },
     'reqHousekeepingService': function () {
