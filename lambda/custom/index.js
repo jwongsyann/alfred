@@ -212,6 +212,16 @@ const handlers = {
     	let speechOutput = 'Ok, I will set your room status to do not disturb for today.';
     	this.response.speak(speechOutput);
     	this.emit(':responseReady');
+    },
+    'askCurrencyExchange': function () {
+    	let speechOutput = 'Sure, we have foreign currency exchange services at the front desk. Please approach the front desk for more information.';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'askLuggageStorage': function () {
+    	let speechOutput = 'Sure, you can leave the luggage with the front desk. I can get the bell boy to collect your luggage for storage whenever you are ready!';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
     }
 };
 
