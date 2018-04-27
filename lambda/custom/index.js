@@ -197,8 +197,7 @@ const handlers = {
     'askBreakfastLocation': function () {
     	var speechOutput = 'Breakfast is available at the lobby cafe';
     	this.response.speak(speechOutput);
-        this.emit(":responseReady");	
-    	};	
+        this.emit(":responseReady");
     },
     'reqHousekeepingService': function () {
     	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
