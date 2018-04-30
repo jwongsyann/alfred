@@ -237,6 +237,11 @@ const handlers = {
     	let speechOutput = 'Sure, you can leave the luggage with the front desk. I can get the bell boy to collect your luggage for storage whenever you are ready!';
     	this.response.speak(speechOutput);
     	this.emit(':responseReady');
+    },
+    'askCheckoutTime': function () {
+    	let speechOutput = 'Checkout time is 12pm';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
     }
 };
 
