@@ -242,6 +242,147 @@ const handlers = {
     	let speechOutput = 'Checkout time is 12pm';
     	this.response.speak(speechOutput);
     	this.emit(':responseReady');
+    },
+    'askLocalExcursions': function () {
+    	let speechOutput = 'You can take a trip to the Trick Eye Museum or the Bird Park or the Cashew Nut Factory. You can approach our front desk if you would like to go. Is there anything else I can help you with?';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'askPaymentMethods': function () {
+    	let speechOutput = 'You can use cash, credit or use traveller\'s check for payment';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'askFacilityAttributes': function () {
+    	var filledSlots = handleGeneralSlots.call(this);
+    	let intentObj = this.event.request.intent;
+
+    	let facility = intentObj.slots.facility.value;
+    	let facilityAttribute = intentObj.slots.facilityAttribute.value;
+    	let speechOutput = '';
+
+    	switch (facility) {
+    		case 'pool':
+    			switch (facilityAttribute) {
+    				case 'length':
+    					speechOutput = 'The pool is 100 meters long';
+    					break;
+    				case 'width':
+    					speechOutput = 'The pool is 50 meters wide';
+    					break;
+    				case 'depth':
+    					speechOutput = 'The pool is 2 meters deep';
+    					break;
+    				case 'lifeguard':
+    					speechOutput = 'There is no lifeguard on duty at the pool. Please exercise caution when swimming';
+    					break;
+    				case 'attire':
+    					speechOutput = 'Please be dressed appropriately for the pool';
+    					break;
+    				case 'type':
+    					speechOutput = 'There is a lap pool and a children\'s pool';
+    					break;
+    				case 'waterType':
+    					speechOutput = 'The pool is chlorinated with a pH level of 7';
+    					break;
+    				case 'chlorineLevel':
+    					speechOutput = 'The chlorine level of our pool is maintained at 3ppm (parts per million) which is the standard safety level';
+    					break;
+    				case 'protectiveEquipment':
+    					speechOutput = 'Pool floats are available at the pool counter'
+    					break;
+    				case 'unitRates':
+    					speechOutput = 'The pool is free of charge for all hotel guests'
+    					break;
+    				case 'amenities':
+    					speechOutput = 'Towels are available at the pool counter'
+    					break;
+    				default:
+    					speechOutput = 'Sorry, I don\'t know that one';
+    			};
+    			break;
+    		case 'gym':
+    			switch (facilityAttribute) {
+    				case 'equipment':
+    					speechOutput = 'The gym is fully equipped with fitness machines and free weights';
+    					break;
+    				case 'trainer':
+    					speechOutput = 'The gym is monitored 24/7 with trainers on hand';
+    					break;
+    				case 'attire':
+    					speechOutput = 'Please be dressed appropriately for the gym';
+    					break;
+    				case 'protectiveEquipment':
+    					speechOutput = 'Protective wear and equipment are available at the gym counter';
+    					break;
+    				case 'unitRates':
+    					speechOutput = 'The gym is free of charge for all hotel guests';
+    					break;
+    				case 'amenities':
+    					speechOutput = 'Towels are available at the gym counter'
+    					break;
+    				default:
+    					speechOutput = 'Sorry, I don\'t know that one';
+    			};
+    			break;
+    		case 'spa':
+    			switch (facilityAttribute) {
+    				case 'attire':
+    					speechOutput = 'Please be dressed appropriately for the spa';
+    					break;
+    				case 'unitRates':
+    					speechOutput = 'The spa rates range from $38 for a foot massage to $480 for a full spa session';
+    					break;
+    				case 'amenities':
+    					speechOutput = 'Towels are available at the spa and sauna'
+    					break;
+    				default:
+    					speechOutput = 'Sorry, I don\'t know that one';
+    			};
+    			break;
+    		default:
+    			speechOutput = 'Sorry, I don\'t know that one';
+    	}
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'askHotelAttributes': function () {
+    	var filledSlots = handleGeneralSlots.call(this);
+    	let intentObj = this.event.request.intent;
+    	let hotelAttribute = intentObj.slots.hotelAttribute.value;
+    	let speechOutput = '';
+
+    	switch (hotelAttribute) {
+    		case 'location':
+    			speechOutput = 'The address of Holiday Inn Resort Phuket is 52 Thawewong Rd, Tambon Patong, Amphoe Kathu, Chang Wat Phuket 83150, Thailand';
+    			break;
+    		case 'restaurants':
+    			speechOutput = 'There is Terrazzo, an Italian Restaurant, Sam\'s Steak and Grill serving western,  Charm Thai for some local Thai cuisine,  buffets at Sea Breeze Cafe, and last but not least, The Bar for drinks and cocktails. Is there anything else I can help you with'
+    			break;
+    		case 'facilities':
+    			speechOutput = 'This hotel is fully fitted to your needs! You will find a pool, spa and a full gym on the fifth floor, a hairdresser on the ground floor and a tennis court at the top floor.'
+    			break;
+    		default:
+    			speechOutput = 'Sorry, I don\'t know that one';
+    	}
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'reqRestaurantReservation': function () {
+    	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
+    	let intentObj = this.event.request.intent;
+    	if (intentObj.confirmationStatus === "DENIED") {
+    		let speechOutput = "Apologies, I must have misunderstood you";
+    		this.response.speak(speechOutput);
+    		this.emit(":responseReady");
+    	} else {
+	    	let restaurant = intentObj.slots.restaurant.value;
+	    	let number = intentObj.slots.number.value;
+	    	let time = intentObj.slots.time.value;    	
+	    	let speechOutput = 'Ok, i will make a reservation for ' + number + ' at ' + restaurant + ' at ' + time;
+	    	this.response.speak(speechOutput);
+	    	this.emit(':responseReady');	
+    	};
     }
 };
 
