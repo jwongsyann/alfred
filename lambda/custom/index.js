@@ -170,6 +170,15 @@ const handlers = {
         this.emit(":responseReady");
     },
     'reqHousekeepingItem': function () {
+    	var filledSlots = handleGeneralSlots.call(this);
+    	let intentObj = this.event.request.intent;
+    	let number = intentObj.slots.number.value;
+    	let housekeepingItem = intentObj.slots.housekeepingItem.value;
+    	let speechOutput = 'I will inform housekeeping immediately to bring you ' + number + ' ' + housekeepingItem;
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+
+    	/*
     	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
     	let intentObj = this.event.request.intent;
     	if (intentObj.confirmationStatus === "DENIED") {
@@ -183,6 +192,7 @@ const handlers = {
 	        this.response.speak(speechOutput);
 	        this.emit(':responseReady');
 	    };
+	    */
     },
     'askBreakfastTime': function () {
     	var speechOutput = 'Breakfast is served daily from 6am to 10am';
@@ -369,6 +379,16 @@ const handlers = {
     	this.emit(':responseReady');
     },
     'reqRestaurantReservation': function () {
+    	var filledSlots = handleGeneralSlots.call(this);
+    	let intentObj = this.event.request.intent;
+    	let number	= intentObj.slots.number.value;
+    	let restaurant = intentObj.slots.restaurant.value;
+    	let time = intentObj.slots.time.value;
+    	let speechOutput = 'Ok, i will make a reservation for ' + number + ' at ' + restaurant + ' at ' + time;
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+
+    	/* Old code which uses handleGeneralSlots
     	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
     	let intentObj = this.event.request.intent;
     	if (intentObj.confirmationStatus === "DENIED") {
@@ -383,6 +403,42 @@ const handlers = {
 	    	this.response.speak(speechOutput);
 	    	this.emit(':responseReady');	
     	};
+    	*/
+    },
+    'askLaundryService': function () {
+    	let speechOutput = 'Laundry services are available 24/7';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'askLaundryServiceRates': function () {
+        var filledSlots = handleGeneralSlots.call(this);
+        var laundryService = this.event.request.intent.slots.laundryService.value;
+        var serviceRates = {
+            'wash': {
+                rate: '$2 per piece'
+            },
+            'dry clean': {
+                rate: '$50 per piece'
+            },
+            'iron': {
+                rate: '$5 per piece'
+            }
+        };
+        
+        var rate = serviceRates[laundryService]["rate"];
+        var speechOutput = rate;
+        this.response.speak(speechOutput);
+        this.emit(":responseReady");
+    },
+    'reqBellboyService': function () {
+    	let speechOutput = 'Sure, I will inform the bell boy immediately';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'reqCheckoutExtension': function () {
+    	let speechOutput = 'Sure, your checkout time has been extended to 2pm';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
     }
 };
 
