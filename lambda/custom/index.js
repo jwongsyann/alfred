@@ -4,6 +4,14 @@
 'use strict';
 const Alexa = require('alexa-sdk');
 
+const AWS = require('aws-sdk'); 
+const AWSregion = 'us-east-1';
+
+var persistenceEnabled;
+AWS.config.update({
+    region: AWSregion
+});
+
 //=========================================================================================================================================
 // Don't touch this part
 //=========================================================================================================================================
@@ -19,6 +27,15 @@ const HELP_REPROMPT = 'What can I help you with?';
 const STOP_MESSAGE = 'Goodbye!';
 const HELLO_MESSAGE = 'Hi! I\'m Alfred the Virtual Butler!';
 
+// Actual app launcher
+exports.handler = function (event, context, callback) {
+    const alexa = Alexa.handler(event, context, callback);
+    alexa.APP_ID = APP_ID;
+    alexa.dynamoDBTableName = 'test';
+    alexa.registerHandlers(handlers);
+    alexa.execute();
+};
+
 //=========================================================================================================================================
 // Put your code here for the intents!
 //=========================================================================================================================================
@@ -29,6 +46,7 @@ const handlers = {
     },
     'helloIntent': function () {
         var reprompt = 'What can I do for you?';
+        this.attributes["hi"] = 'hi';
         this.response.speak(HELLO_MESSAGE).listen(reprompt);
         this.emit(':responseReady');
     },
@@ -72,8 +90,12 @@ const handlers = {
         let openingTime = facilityOpeningTimes[facility]["openingTime"];
         let closingTime = facilityOpeningTimes[facility]["closingTime"];
 
-        let speechOutput = "The " + facility + " opens at " + openingTime + " and closes at " + closingTime;
-      
+
+        if (facility === 'gym') {
+        	let speechOutput = ""
+        } else {
+        	
+        }
         this.response.speak(speechOutput);
         this.emit(":responseReady");
     },
@@ -222,6 +244,7 @@ const handlers = {
 	        this.response.speak(speechOutput);
 	        this.emit(':responseReady');	
     	};
+
     },
     'reqTidyRoom': function () {
     	let speechOutput = 'Ok, I will inform housekeeping immediately to make your room';
@@ -356,25 +379,21 @@ const handlers = {
     	this.response.speak(speechOutput);
     	this.emit(':responseReady');
     },
-    'askHotelAttributes': function () {
+    'askHotelAddress': function () {
     	var filledSlots = handleGeneralSlots.call(this);
-    	let intentObj = this.event.request.intent;
-    	let hotelAttribute = intentObj.slots.hotelAttribute.value;
-    	let speechOutput = '';
-
-    	switch (hotelAttribute) {
-    		case 'location':
-    			speechOutput = 'The address of Holiday Inn Resort Phuket is 52 Thawewong Rd, Tambon Patong, Amphoe Kathu, Chang Wat Phuket 83150, Thailand';
-    			break;
-    		case 'restaurants':
-    			speechOutput = 'There is Terrazzo, an Italian Restaurant, Sam\'s Steak and Grill serving western,  Charm Thai for some local Thai cuisine,  buffets at Sea Breeze Cafe, and last but not least, The Bar for drinks and cocktails. Is there anything else I can help you with'
-    			break;
-    		case 'facilities':
-    			speechOutput = 'This hotel is fully fitted to your needs! You will find a pool, spa and a full gym on the fifth floor, a hairdresser on the ground floor and a tennis court at the top floor.'
-    			break;
-    		default:
-    			speechOutput = 'Sorry, I don\'t know that one';
-    	}
+    	let speechOutput = 'The address of Holiday Inn Resort Phuket is 52 Thawewong Rd, Tambon Patong, Amphoe Kathu, Chang Wat Phuket 83150, Thailand';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'askHotelRestaurants': function () {
+    	var filledSlots = handleGeneralSlots.call(this);
+    	let speechOutput = 'There is Terrazzo, an Italian Restaurant, Sam\'s Steak and Grill serving western,  Charm Thai for some local Thai cuisine,  buffets at Sea Breeze Cafe, and last but not least, The Bar for drinks and cocktails. Is there anything else I can help you with';
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
+    },
+    'askHotelFacilities': function () {
+    	var filledSlots = handleGeneralSlots.call(this);
+    	let speechOutput = 'This hotel is fully fitted to your needs! You will find a pool, spa and a full gym on the fifth floor, a hairdresser on the ground floor and a tennis court at the top floor.';
     	this.response.speak(speechOutput);
     	this.emit(':responseReady');
     },
@@ -439,14 +458,35 @@ const handlers = {
     	let speechOutput = 'Sure, your checkout time has been extended to 2pm';
     	this.response.speak(speechOutput);
     	this.emit(':responseReady');
-    }
-};
+    },
+    'reqRoomService': function () {
+    	var filledSlots = handleGeneralSlots.call(this);
+    	let intentObj = this.event.request.intent;
+    	let dish = intentObj.slots.dish.value;
+    	let speechOutput = 'I will inform room service immediately to bring you ' + dish;
+    	this.response.speak(speechOutput);
+    	this.emit(':responseReady');
 
-exports.handler = function (event, context, callback) {
-    const alexa = Alexa.handler(event, context, callback);
-    alexa.APP_ID = APP_ID;
-    alexa.registerHandlers(handlers);
-    alexa.execute();
+    	/*
+    	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
+    	let intentObj = this.event.request.intent;
+    	if (intentObj.confirmationStatus === "DENIED") {
+    		let speechOutput = "Apologies, I must have misunderstood you";
+    		this.response.speak(speechOutput);
+    		this.emit(":responseReady");
+    	} else {
+	    	let number = intentObj.slots.number.value;
+	    	let housekeepingItem = intentObj.slots.housekeepingItem.value;
+	        let speechOutput = "I will inform housekeeping immediately to bring you " + number + ' ' + housekeepingItem;
+	        this.response.speak(speechOutput);
+	        this.emit(':responseReady');
+	    };
+	    */
+    },
+    'SessionEndedRequest': function() {
+    	console.log('session ended!');
+    	this.emit(':saveState', true);
+  	}
 };
 
 //=========================================================================================================================================
