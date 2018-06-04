@@ -1,16 +1,9 @@
+
 /* eslint-disable  func-names */
 /* eslint quote-props: ["error", "consistent"]*/
 
 'use strict';
 const Alexa = require('alexa-sdk');
-
-const AWS = require('aws-sdk'); 
-const AWSregion = 'us-east-1';
-
-var persistenceEnabled;
-AWS.config.update({
-    region: AWSregion
-});
 
 //=========================================================================================================================================
 // Don't touch this part
@@ -31,7 +24,6 @@ const HELLO_MESSAGE = 'Hi! I\'m Alfred the Virtual Butler!';
 exports.handler = function (event, context, callback) {
     const alexa = Alexa.handler(event, context, callback);
     alexa.APP_ID = APP_ID;
-    alexa.dynamoDBTableName = 'test';
     alexa.registerHandlers(handlers);
     alexa.execute();
 };
@@ -46,7 +38,6 @@ const handlers = {
     },
     'helloIntent': function () {
         var reprompt = 'What can I do for you?';
-        this.attributes["hi"] = 'hi';
         this.response.speak(HELLO_MESSAGE).listen(reprompt);
         this.emit(':responseReady');
     },
@@ -199,22 +190,6 @@ const handlers = {
     	let speechOutput = 'I will inform housekeeping immediately to bring you ' + number + ' ' + housekeepingItem;
     	this.response.speak(speechOutput);
     	this.emit(':responseReady');
-
-    	/*
-    	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
-    	let intentObj = this.event.request.intent;
-    	if (intentObj.confirmationStatus === "DENIED") {
-    		let speechOutput = "Apologies, I must have misunderstood you";
-    		this.response.speak(speechOutput);
-    		this.emit(":responseReady");
-    	} else {
-	    	let number = intentObj.slots.number.value;
-	    	let housekeepingItem = intentObj.slots.housekeepingItem.value;
-	        let speechOutput = "I will inform housekeeping immediately to bring you " + number + ' ' + housekeepingItem;
-	        this.response.speak(speechOutput);
-	        this.emit(':responseReady');
-	    };
-	    */
     },
     'askBreakfastTime': function () {
     	var speechOutput = 'Breakfast is served daily from 6am to 10am';
@@ -406,23 +381,6 @@ const handlers = {
     	let speechOutput = 'Ok, i will make a reservation for ' + number + ' at ' + restaurant + ' at ' + time;
     	this.response.speak(speechOutput);
     	this.emit(':responseReady');
-
-    	/* Old code which uses handleGeneralSlots
-    	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
-    	let intentObj = this.event.request.intent;
-    	if (intentObj.confirmationStatus === "DENIED") {
-    		let speechOutput = "Apologies, I must have misunderstood you";
-    		this.response.speak(speechOutput);
-    		this.emit(":responseReady");
-    	} else {
-	    	let restaurant = intentObj.slots.restaurant.value;
-	    	let number = intentObj.slots.number.value;
-	    	let time = intentObj.slots.time.value;    	
-	    	let speechOutput = 'Ok, i will make a reservation for ' + number + ' at ' + restaurant + ' at ' + time;
-	    	this.response.speak(speechOutput);
-	    	this.emit(':responseReady');	
-    	};
-    	*/
     },
     'askLaundryService': function () {
     	let speechOutput = 'Laundry services are available 24/7';
@@ -466,22 +424,6 @@ const handlers = {
     	let speechOutput = 'I will inform room service immediately to bring you ' + dish;
     	this.response.speak(speechOutput);
     	this.emit(':responseReady');
-
-    	/*
-    	var filledSlots = handleGeneralSlotsWithIntentConfirmation.call(this);
-    	let intentObj = this.event.request.intent;
-    	if (intentObj.confirmationStatus === "DENIED") {
-    		let speechOutput = "Apologies, I must have misunderstood you";
-    		this.response.speak(speechOutput);
-    		this.emit(":responseReady");
-    	} else {
-	    	let number = intentObj.slots.number.value;
-	    	let housekeepingItem = intentObj.slots.housekeepingItem.value;
-	        let speechOutput = "I will inform housekeeping immediately to bring you " + number + ' ' + housekeepingItem;
-	        this.response.speak(speechOutput);
-	        this.emit(':responseReady');
-	    };
-	    */
     },
     'SessionEndedRequest': function() {
     	console.log('session ended!');
